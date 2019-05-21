@@ -215,18 +215,17 @@ public class PlayerAction_CameraController : MonoBehaviour
 
                 if (hit.collider.name == "Plant")
                 {
+                    Debug.Log("subCamera_plant");
                     mainCamera.SetActive(false);
                     subCamera_plant.SetActive(true);
-                    Debug.Log("subCamera_plant");
-
+                    
                 }
 
                 if (hit.collider.name == "stool(9)")
                 {
+                    Debug.Log("subCamera_stool");
                     mainCamera.SetActive(false);
                     SubCamera_stool.SetActive(true);
-                    Debug.Log("subCamera_stool");
-
                 }
 
 
