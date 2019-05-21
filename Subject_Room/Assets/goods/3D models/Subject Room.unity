@@ -5685,14 +5685,14 @@ MonoBehaviour:
   itemBtn_key: {fileID: 1084107639}
   myItem: 
   door: {fileID: 1553965585}
-  mainCamera: {fileID: 1693130222}
-  subCamera_plant: {fileID: 2038054059}
+  mainCamera: {fileID: 1693130225}
+  subCamera_plant: {fileID: 2038054062}
   door_open: {fileID: 8300000, guid: d4b0c45221e363945a1daad53b7453db, type: 3}
   woodhammer: {fileID: 1432669014}
   item_woodhammer: {fileID: 605022238}
   red_bus: {fileID: 804918348}
   item_red_bus: {fileID: 706422418}
-  SubCamera_stool: {fileID: 353817531}
+  SubCamera_stool: {fileID: 353817535}
 --- !u!1 &994079765
 GameObject:
   m_ObjectHideFlags: 0
@@ -10923,7 +10923,7 @@ GameObject:
   - component: {fileID: 2038054062}
   - component: {fileID: 2038054061}
   m_Layer: 0
-  m_Name: subCamera_plant
+  m_Name: SubCamera_plant
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

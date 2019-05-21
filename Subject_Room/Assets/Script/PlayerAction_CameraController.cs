@@ -17,15 +17,15 @@ public class PlayerAction_CameraController : MonoBehaviour
     public GameObject itemBtn_key;
     public string myItem;
     public GameObject door;
-    public GameObject mainCamera;
-    public GameObject subCamera_plant;
+    public Camera mainCamera;
+    public Camera subCamera_plant;
     public AudioClip door_open;
     bool once;
     public GameObject woodhammer;
     public GameObject item_woodhammer;
     public GameObject red_bus;
     public GameObject item_red_bus;
-    public GameObject SubCamera_stool;
+    public Camera SubCamera_stool;
 
 
 
@@ -39,9 +39,13 @@ public class PlayerAction_CameraController : MonoBehaviour
         itemBtn_key.SetActive(false);
         myItem = "noitem";
         door = GameObject.Find("door");
-        mainCamera.SetActive(true);
-        subCamera_plant.SetActive(false);
-        SubCamera_stool.SetActive(false);
+        mainCamera = GetComponent<Camera>();
+        mainCamera.enabled = true;
+        subCamera_plant = GetComponent<Camera>();
+        subCamera_plant.enabled = false;
+        SubCamera_stool = GetComponent<Camera>();
+        SubCamera_stool.enabled = false;
+
         once = true;
 
         //木槌
@@ -67,9 +71,9 @@ public class PlayerAction_CameraController : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Space))
         {
             Debug.Log("戻る");
-            mainCamera.SetActive(true);
-            subCamera_plant.SetActive(false);
-            SubCamera_stool.SetActive(false);
+            mainCamera.enabled = true;
+            subCamera_plant.enabled = false;
+            SubCamera_stool.enabled = false;
         }
 
         if (Input.GetMouseButtonUp(0))
@@ -95,142 +99,168 @@ public class PlayerAction_CameraController : MonoBehaviour
         {
 
             selectedGameObject = hit.collider.gameObject;
-            if (once)
+            switch (selectedGameObject.name)
             {
+
+
+                case "Button":
+                    Debug.Log("ボタンを押した");
+                    item_key.SetActive(true);
+
+                    return;
+
+                case "item_key":
+                    Debug.Log("カギを触った");
+                    item_key.SetActive(false);
+                    itemBtn_key.SetActive(true);
+                    return;
+
+                case "door":
+                    if (myItem == "key")
+                    {
+                        Debug.Log("ドアをクリックした");
+                        GameObject.Find("door").GetComponent<Renderer>().enabled = true;
+                        AudioSource.PlayClipAtPoint(door_open, transform.position);
+                        once = false;
+                    }
+                    return;
+            }
+
+            //植物クリックで木槌をゲット
+            if (subCamera_plant.gameObject.GetComponent<Camera>())
+            {
+                ray = subCamera_plant.ScreenPointToRay(Input.mousePosition);
+
+
+                if ((Physics.Raycast(ray, out hit, 10000000, 1 << 8)))
+                {
+                    selectedGameObject = hit.collider.gameObject;
+                    switch (selectedGameObject.name)
+                    {
+                            case "woodhammer":
+                            Debug.Log("ハンマーを取得");
+                            item_woodhammer.SetActive(true);
+                            woodhammer.SetActive(false);
+                            return;
+                    }
+
+                }
+            }
+
+            //スツールをクリックでバスを取得
+            if (SubCamera_stool.gameObject.GetComponent<Camera>())
+            {
+                ray = SubCamera_stool.ScreenPointToRay(Input.mousePosition);
+
+
+                if ((Physics.Raycast(ray, out hit, 10000000, 1 << 8)))
+                {
+                    selectedGameObject = hit.collider.gameObject;
+                    switch (selectedGameObject.name)
+                    {                                                                 
+                        case "red_bus":
+                            Debug.Log("赤いバスを取得");
+                            item_red_bus.SetActive(true);
+                            red_bus.SetActive(false);
+                            break;
+
+                    }
+
+                }
+            }
+
+
+
+
+
+            rayItem = GameObject.Find("itemListCamera").GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(rayItem, out hit, 100000000, 1 << 9))
+            {
+                selectedGameObject = hit.collider.gameObject;
                 switch (selectedGameObject.name)
                 {
+                    case "itemBtn_key_plane":
 
-
-                    case "Button":
-                        Debug.Log("ボタンを押した");
-                        item_key.SetActive(true);
-
-                        return;
-
-                    case "item_key":
-                        Debug.Log("カギを触った");
-                        item_key.SetActive(false);
-                        itemBtn_key.SetActive(true);
-                        return;
-
-                    case "door":
                         if (myItem == "key")
                         {
-                            Debug.Log("ドアをクリックした");
-                            GameObject.Find("door").GetComponent<Renderer>().enabled = true;
-                            AudioSource.PlayClipAtPoint(door_open, transform.position);
-                            once = false;
+                            Debug.Log("カギを戻した");
+                            GameObject.Find("itemBtn_key_plane").GetComponent<Renderer>().enabled = false;
+                            myItem = "noitem";
+
                         }
-                        return;
-
-
-                    case "woodhammer":
-                        Debug.Log("ハンマーを取得");
-                        item_woodhammer.SetActive(true);
-                        woodhammer.SetActive(false);
-                        return;
-
-
-                    case "red_bus":
-                        Debug.Log("赤いバスを取得");
-                        item_red_bus.SetActive(true);
-                        red_bus.SetActive(false);
+                        else
+                        {
+                            Debug.Log("カギを装備した");
+                            GameObject.Find("itemBtn_key_plane").GetComponent<Renderer>().enabled = true;
+                            myItem = "key";
+                        }
                         break;
+
+
+                    case "item_woodhammer_plane":
+                        {
+                            if (myItem == "woodhammer")
+                            {
+                                Debug.Log("木槌を戻した");
+                                GameObject.Find("item_woodhammer_plane").GetComponent<Renderer>().enabled = false;
+                                myItem = "noitem";
+                            }
+                            else
+                            {
+                                Debug.Log("木槌を装備した");
+                                GameObject.Find("item_woodhammer_plane").GetComponent<Renderer>().enabled = true;
+                                myItem = "woodhammer";
+
+                            }
+                            break;
+                        }
+
+                    case "item_red_bus_plane":
+                        {
+                            if (myItem == "red_bus")
+                            {
+                                Debug.Log("バスを戻した");
+                                GameObject.Find("item_red_bus_plane").GetComponent<Renderer>().enabled = false;
+                                myItem = "noitem";
+                            }
+                            else
+                            {
+                                Debug.Log("バスを装備した");
+                                GameObject.Find("item_red_bus_plane").GetComponent<Renderer>().enabled = true;
+                                myItem = "red_bus";
+
+                            }
+                            break;
+                        }
+                }
+                Debug.Log("MainCamera");
+
+            }
+
+            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit, 10000.0f))
+            {
+
+                if (hit.collider.name == "Plant")
+                {
+                    Debug.Log("subCamera_plant");
+                    mainCamera.enabled = false;
+                    subCamera_plant.enabled = true;
 
                 }
 
+                if (hit.collider.name == "hint_stool")
+                {
+                    Debug.Log("subCamera_stool");
+                    mainCamera.enabled = false;
+                    SubCamera_stool.enabled = true;
+
+                }
+
+
             }
+
 
         }
-
-
-
-        rayItem = GameObject.Find("itemListCamera").GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(rayItem, out hit, 100000000, 1 << 9))
-        {
-            selectedGameObject = hit.collider.gameObject;
-            switch (selectedGameObject.name)
-            {
-                case "itemBtn_key_plane":
-
-                    if (myItem == "key")
-                    {
-                        Debug.Log("カギを戻した");
-                        GameObject.Find("itemBtn_key_plane").GetComponent<Renderer>().enabled = false;
-                        myItem = "noitem";
-
-                    }
-                    else
-                    {
-                        Debug.Log("カギを装備した");
-                        GameObject.Find("itemBtn_key_plane").GetComponent<Renderer>().enabled = true;
-                        myItem = "key";
-                    }
-                    break;
-
-
-                case "item_woodhammer_plane":
-                    {
-                        if (myItem == "woodhammer")
-                        {
-                            Debug.Log("木槌を戻した");
-                            GameObject.Find("item_woodhammer_plane").GetComponent<Renderer>().enabled = false;
-                            myItem = "noitem";
-                        }
-                        else
-                        {
-                            Debug.Log("木槌を装備した");
-                            GameObject.Find("item_woodhammer_plane").GetComponent<Renderer>().enabled = true;
-                            myItem = "woodhammer";
-
-                        }
-                        break;
-                    }
-
-                case "item_red_bus_plane":
-                    {
-                        if (myItem == "red_bus")
-                        {
-                            Debug.Log("バスを戻した");
-                            GameObject.Find("item_red_bus_plane").GetComponent<Renderer>().enabled = false;
-                            myItem = "noitem";
-                        }
-                        else
-                        {
-                            Debug.Log("バスを装備した");
-                            GameObject.Find("item_red_bus_plane").GetComponent<Renderer>().enabled = true;
-                            myItem = "red_bus";
-
-                        }
-                        break;
-                    }
-            }
-            Debug.Log("MainCamera");
-                                  
-        }
-
-        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, 10000.0f))
-        {
-
-            if (hit.collider.name == "Plant")
-            {
-                Debug.Log("subCamera_plant");
-                mainCamera.SetActive(false);
-                subCamera_plant.SetActive(true);
-
-            }
-
-            if (hit.collider.name == "hint_stool")
-            {
-                Debug.Log("subCamera_stool");
-                mainCamera.SetActive(false);
-                SubCamera_stool.SetActive(true);
-            }
-                        
-
-        }
-
-
     }
 }
