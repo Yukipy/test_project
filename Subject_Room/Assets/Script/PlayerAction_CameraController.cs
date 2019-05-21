@@ -80,6 +80,7 @@ public class PlayerAction_CameraController : MonoBehaviour
             }
 
         }
+
     }
 
     public void SearchRoom()
@@ -205,36 +206,31 @@ public class PlayerAction_CameraController : MonoBehaviour
                     }
             }
             Debug.Log("MainCamera");
+                                  
+        }
 
+        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit, 10000.0f))
+        {
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            
-
-            if (Physics.Raycast(ray, out hit, 100000.0f))
+            if (hit.collider.name == "Plant")
             {
-
-                if (hit.collider.name == "Plant")
-                {
-                    Debug.Log("subCamera_plant");
-                    mainCamera.SetActive(false);
-                    subCamera_plant.SetActive(true);
-                    
-                }
-
-                if (hit.collider.name == "stool(9)")
-                {
-                    Debug.Log("subCamera_stool");
-                    mainCamera.SetActive(false);
-                    SubCamera_stool.SetActive(true);
-                }
-
-
-
+                Debug.Log("subCamera_plant");
+                mainCamera.SetActive(false);
+                subCamera_plant.SetActive(true);
 
             }
 
+            if (hit.collider.name == "hint_stool")
+            {
+                Debug.Log("subCamera_stool");
+                mainCamera.SetActive(false);
+                SubCamera_stool.SetActive(true);
+            }
+                        
 
         }
+
 
     }
 }
