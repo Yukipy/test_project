@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/goods/3D models/Subject Room.unity
+- path: Assets/Subject Room.unity
   isLoaded: 1
   isActive: 1

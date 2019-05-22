@@ -17,15 +17,15 @@ public class PlayerAction_CameraController : MonoBehaviour
     public GameObject itemBtn_key;
     public string myItem;
     public GameObject door;
-    public Camera mainCamera;
-    public Camera subCamera_plant;
+    public GameObject mainCamera;
+    public GameObject subCamera_plant;
     public AudioClip door_open;
     bool once;
     public GameObject woodhammer;
     public GameObject item_woodhammer;
     public GameObject red_bus;
     public GameObject item_red_bus;
-    public Camera SubCamera_stool;
+    public GameObject SubCamera_stool;
 
 
 
@@ -39,12 +39,9 @@ public class PlayerAction_CameraController : MonoBehaviour
         itemBtn_key.SetActive(false);
         myItem = "noitem";
         door = GameObject.Find("door");
-        mainCamera = GetComponent<Camera>();
-        mainCamera.enabled = true;
-        subCamera_plant = GetComponent<Camera>();
-        subCamera_plant.enabled = false;
-        SubCamera_stool = GetComponent<Camera>();
-        SubCamera_stool.enabled = false;
+        mainCamera.SetActive(true);
+        subCamera_plant.SetActive(false);
+        SubCamera_stool.SetActive(false);
 
         once = true;
 
@@ -71,9 +68,9 @@ public class PlayerAction_CameraController : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Space))
         {
             Debug.Log("戻る");
-            mainCamera.enabled = true;
-            subCamera_plant.enabled = false;
-            SubCamera_stool.enabled = false;
+            mainCamera.SetActive(true);
+            subCamera_plant.SetActive(false);
+            SubCamera_stool.SetActive(false);
         }
 
         if (Input.GetMouseButtonUp(0))
@@ -127,7 +124,7 @@ public class PlayerAction_CameraController : MonoBehaviour
             }
 
             //植物クリックで木槌をゲット
-            if (subCamera_plant.gameObject.GetComponent<Camera>())
+            if (subCamera_plant.gameObject.GetComponent<Renderer>())
             {
                 ray = subCamera_plant.ScreenPointToRay(Input.mousePosition);
 
@@ -148,7 +145,7 @@ public class PlayerAction_CameraController : MonoBehaviour
             }
 
             //スツールをクリックでバスを取得
-            if (SubCamera_stool.gameObject.GetComponent<Camera>())
+            if (SubCamera_stool.gameObject.GetComponent<Renderer>())
             {
                 ray = SubCamera_stool.ScreenPointToRay(Input.mousePosition);
 
@@ -244,16 +241,16 @@ public class PlayerAction_CameraController : MonoBehaviour
                 if (hit.collider.name == "Plant")
                 {
                     Debug.Log("subCamera_plant");
-                    mainCamera.enabled = false;
-                    subCamera_plant.enabled = true;
+                    mainCamera.SetActive(false);
+                    subCamera_plant.SetActive(true);
 
                 }
 
                 if (hit.collider.name == "hint_stool")
                 {
                     Debug.Log("subCamera_stool");
-                    mainCamera.enabled = false;
-                    SubCamera_stool.enabled = true;
+                    mainCamera.SetActive(false);
+                    SubCamera_stool.SetActive(true);
 
                 }
 
