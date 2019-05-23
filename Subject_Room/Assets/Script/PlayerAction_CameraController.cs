@@ -13,19 +13,31 @@ public class PlayerAction_CameraController : MonoBehaviour
     public Ray rayItem;
     public RaycastHit hit;
     public GameObject selectedGameObject;
+    public string myItem;
+    bool once;
+    public GameObject itemListCamera;
+
+    //key&door
     public GameObject item_key;
     public GameObject itemBtn_key;
-    public string myItem;
     public GameObject door;
+    public AudioClip door_open;
+
+    /// Camera
     public GameObject mainCamera;
     public GameObject subCamera_plant;
-    public AudioClip door_open;
-    bool once;
+    public GameObject SubCamera_stool;
+
+    //darumaotoshi
     public GameObject woodhammer;
     public GameObject item_woodhammer;
+    public GameObject woodhammer_set;
+    public GameObject arrows;
+
+    //bus
     public GameObject red_bus;
     public GameObject item_red_bus;
-    public GameObject SubCamera_stool;
+   
 
 
 
@@ -45,10 +57,15 @@ public class PlayerAction_CameraController : MonoBehaviour
 
         once = true;
 
-        //木槌
+        //木槌とやじるし
         GameObject.Find("item_woodhammer_plane").GetComponent<Renderer>().enabled = false;
         item_woodhammer = GameObject.Find("item_woodhammer");
         item_woodhammer.SetActive(false);
+        woodhammer_set = GameObject.Find("woodhammer_set");
+        woodhammer_set.SetActive(false);
+        arrows = GameObject.Find("arrows");
+        arrows.SetActive(false);
+
 
 
         //赤いバス
@@ -81,7 +98,6 @@ public class PlayerAction_CameraController : MonoBehaviour
             }
 
         }
-
     }
 
     public void SearchRoom()
@@ -89,10 +105,27 @@ public class PlayerAction_CameraController : MonoBehaviour
 
         selectedGameObject = null;
         Debug.Log(Camera.main);
-        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        mainCamera.gameObject.GetComponent<Camera>();
+
+        Ray ray = new Ray();
+
+        if(mainCamera.activeInHierarchy == true)
+        {
+            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        }
+        else if (subCamera_plant.activeInHierarchy == true)
+        {
+            ray = subCamera_plant.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+        }
+        else if (SubCamera_stool.activeInHierarchy == true)
+        {
+            ray = SubCamera_stool.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+        }
+
+       
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, 10000000, 1 << 8))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << 8))
         {
 
             selectedGameObject = hit.collider.gameObject;
@@ -121,57 +154,37 @@ public class PlayerAction_CameraController : MonoBehaviour
                         once = false;
                     }
                     return;
-            }
 
-            //植物クリックで木槌をゲット
-            if (subCamera_plant.gameObject.GetComponent<Renderer>())
-            {
-                ray = subCamera_plant.ScreenPointToRay(Input.mousePosition);
-
-
-                if ((Physics.Raycast(ray, out hit, 10000000, 1 << 8)))
-                {
-                    selectedGameObject = hit.collider.gameObject;
-                    switch (selectedGameObject.name)
+                case "woodhammer_set":
+                    if(myItem == "woodhammer")
                     {
-                            case "woodhammer":
-                            Debug.Log("ハンマーを取得");
-                            item_woodhammer.SetActive(true);
-                            woodhammer.SetActive(false);
-                            return;
+                        Debug.Log("woodhammerをとりつけた");
+                        woodhammer_set.SetActive(true);
+                        item_woodhammer.SetActive(false);
+                        arrows.SetActive(true);
                     }
+                    return;
 
-                }
-            }
+                case "woodhammer":
+                    Debug.Log("ハンマーを取得");
+                    item_woodhammer.SetActive(true);
+                    woodhammer.SetActive(false);
+                    return;
 
-            //スツールをクリックでバスを取得
-            if (SubCamera_stool.gameObject.GetComponent<Renderer>())
-            {
-                ray = SubCamera_stool.ScreenPointToRay(Input.mousePosition);
-
-
-                if ((Physics.Raycast(ray, out hit, 10000000, 1 << 8)))
-                {
-                    selectedGameObject = hit.collider.gameObject;
-                    switch (selectedGameObject.name)
-                    {                                                                 
-                        case "red_bus":
-                            Debug.Log("赤いバスを取得");
-                            item_red_bus.SetActive(true);
-                            red_bus.SetActive(false);
-                            break;
-
-                    }
-
-                }
+                case "red_bus":
+                     Debug.Log("赤いバスを取得");
+                     item_red_bus.SetActive(true);
+                     red_bus.SetActive(false);
+                     return;
+                                                      
             }
 
 
-
+           
 
 
             rayItem = GameObject.Find("itemListCamera").GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(rayItem, out hit, 100000000, 1 << 9))
+            if (Physics.Raycast(rayItem, out hit, Mathf.Infinity, 1 << 9))
             {
                 selectedGameObject = hit.collider.gameObject;
                 switch (selectedGameObject.name)
@@ -199,13 +212,13 @@ public class PlayerAction_CameraController : MonoBehaviour
                             if (myItem == "woodhammer")
                             {
                                 Debug.Log("木槌を戻した");
-                                GameObject.Find("item_woodhammer_plane").GetComponent<Renderer>().enabled = false;
+                                GameObject.Find("item_woodhammer_plane").GetComponent<MeshRenderer>().enabled = false;
                                 myItem = "noitem";
                             }
                             else
                             {
                                 Debug.Log("木槌を装備した");
-                                GameObject.Find("item_woodhammer_plane").GetComponent<Renderer>().enabled = true;
+                                GameObject.Find("item_woodhammer_plane").GetComponent<MeshRenderer>().enabled = true;
                                 myItem = "woodhammer";
 
                             }
@@ -217,13 +230,13 @@ public class PlayerAction_CameraController : MonoBehaviour
                             if (myItem == "red_bus")
                             {
                                 Debug.Log("バスを戻した");
-                                GameObject.Find("item_red_bus_plane").GetComponent<Renderer>().enabled = false;
+                                GameObject.Find("item_red_bus_plane").GetComponent<MeshRenderer>().enabled = false;
                                 myItem = "noitem";
                             }
                             else
                             {
                                 Debug.Log("バスを装備した");
-                                GameObject.Find("item_red_bus_plane").GetComponent<Renderer>().enabled = true;
+                                GameObject.Find("item_red_bus_plane").GetComponent<MeshRenderer>().enabled = true;
                                 myItem = "red_bus";
 
                             }
@@ -234,29 +247,33 @@ public class PlayerAction_CameraController : MonoBehaviour
 
             }
 
-            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            
             if (Physics.Raycast(ray, out hit, 10000.0f))
             {
 
                 if (hit.collider.name == "Plant")
+              {
+                Debug.Log("subCamera_plant");
+              subCamera_plant.SetActive(true);
+                  mainCamera.SetActive(false);
+                 itemListCamera.GetComponent<Camera>().enabled = false;
+                  itemListCamera.GetComponent<Camera>().enabled = true;
+            
+               }
+
+              if (hit.collider.name == "hint_stool")
                 {
-                    Debug.Log("subCamera_plant");
-                    mainCamera.SetActive(false);
-                    subCamera_plant.SetActive(true);
+                  Debug.Log("subCamera_stool");
+                SubCamera_stool.SetActive(true);
+                 mainCamera.SetActive(false);
+                itemListCamera.GetComponent<Camera>().enabled = false;
+                itemListCamera.GetComponent<Camera>().enabled = true;
 
                 }
 
-                if (hit.collider.name == "hint_stool")
-                {
-                    Debug.Log("subCamera_stool");
-                    mainCamera.SetActive(false);
-                    SubCamera_stool.SetActive(true);
 
-                }
-
-
-            }
-
+           }
+  
 
         }
     }
