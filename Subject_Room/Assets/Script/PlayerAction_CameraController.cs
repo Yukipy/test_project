@@ -15,7 +15,7 @@ public class PlayerAction_CameraController : MonoBehaviour
     public GameObject selectedGameObject;
     public string myItem;
     bool once;
-    public GameObject itemListCamera;
+    
 
     //key&door
     public GameObject item_key;
@@ -27,12 +27,23 @@ public class PlayerAction_CameraController : MonoBehaviour
     public GameObject mainCamera;
     public GameObject subCamera_plant;
     public GameObject SubCamera_stool;
+    public GameObject itemListCamera;
+    public GameObject daruma_Camera;
+
 
     //darumaotoshi
     public GameObject woodhammer;
     public GameObject item_woodhammer;
     public GameObject woodhammer_set;
     public GameObject arrows;
+    public GameObject leftarrow;
+    public GameObject rightarrow;
+    public GameObject uparrow;
+    public GameObject downarrow;
+    public GameObject box_old_top;
+    public GameObject box_new_top;
+    public GameObject driver;
+    public GameObject item_driver;
 
     //bus
     public GameObject red_bus;
@@ -54,10 +65,11 @@ public class PlayerAction_CameraController : MonoBehaviour
         mainCamera.SetActive(true);
         subCamera_plant.SetActive(false);
         SubCamera_stool.SetActive(false);
+        daruma_Camera.SetActive(false);
 
         once = true;
 
-        //木槌とやじるし
+        //達磨落とし
         GameObject.Find("item_woodhammer_plane").GetComponent<Renderer>().enabled = false;
         item_woodhammer = GameObject.Find("item_woodhammer");
         item_woodhammer.SetActive(false);
@@ -65,6 +77,11 @@ public class PlayerAction_CameraController : MonoBehaviour
         woodhammer_set.SetActive(false);
         arrows = GameObject.Find("arrows");
         arrows.SetActive(false);
+        box_new_top.SetActive(false);
+        GameObject.Find("item_driver_plane").GetComponent<Renderer>().enabled = false;
+        item_driver = GameObject.Find("item_driver");
+        item_driver.SetActive(false);
+        
 
 
 
@@ -88,7 +105,8 @@ public class PlayerAction_CameraController : MonoBehaviour
             mainCamera.SetActive(true);
             subCamera_plant.SetActive(false);
             SubCamera_stool.SetActive(false);
-        }
+            daruma_Camera.SetActive(false);
+        }   
 
         if (Input.GetMouseButtonUp(0))
         {
@@ -120,6 +138,10 @@ public class PlayerAction_CameraController : MonoBehaviour
         else if (SubCamera_stool.activeInHierarchy == true)
         {
             ray = SubCamera_stool.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+        }
+        else if (daruma_Camera.activeInHierarchy == true)
+        {
+            ray = daruma_Camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
         }
 
        
@@ -155,15 +177,7 @@ public class PlayerAction_CameraController : MonoBehaviour
                     }
                     return;
 
-                case "woodhammer_set":
-                    if(myItem == "woodhammer")
-                    {
-                        Debug.Log("woodhammerをとりつけた");
-                        woodhammer_set.SetActive(true);
-                        item_woodhammer.SetActive(false);
-                        arrows.SetActive(true);
-                    }
-                    return;
+               
 
                 case "woodhammer":
                     Debug.Log("ハンマーを取得");
@@ -172,16 +186,91 @@ public class PlayerAction_CameraController : MonoBehaviour
                     return;
 
                 case "red_bus":
-                     Debug.Log("赤いバスを取得");
-                     item_red_bus.SetActive(true);
-                     red_bus.SetActive(false);
-                     return;
-                                                      
+                    Debug.Log("赤いバスを取得");
+                    item_red_bus.SetActive(true);
+                    red_bus.SetActive(false);
+                    return;
+
+                case "woodhammer_setbox":
+
+                    if (daruma_Camera.activeInHierarchy == true)
+                    {
+                        if (myItem == "noitem")
+                            
+                        {
+                            woodhammer_set.SetActive(false);
+                        }
+                        else if (GameObject.Find("item_woodhammer_plane").GetComponent<MeshRenderer>().enabled == true)
+                        {
+
+                            Debug.Log("woodhammerをとりつけた");
+                            woodhammer_set.SetActive(true);
+                            item_woodhammer.SetActive(false);
+                            arrows.SetActive(true);
+                        }
+
+                        else if (GameObject.Find("item_woodhammer_plane").GetComponent<MeshRenderer>().enabled == false)
+                        {
+                            woodhammer_set.SetActive(false);
+                        }
+                        
+                    }
+                    return;
+
+                // 矢印押す処理
+                case "arrow": 
+                    if (daruma_Camera.activeInHierarchy == true)
+                    {
+                        if (hit.collider.name == "rightarrow")
+                        {
+                            Debug.Log("right");
+                            if (hit.collider.name == "downarrow")
+                            {
+                                Debug.Log("down");
+                                if (hit.collider.name == "downarrow")
+                                {
+                                    Debug.Log("down");
+                                    if (hit.collider.name == "leftarrow")
+                                    {
+                                        Debug.Log("left");
+                                        if (hit.collider.name == "downarrow")
+                                        {
+                                            Debug.Log("down");
+                                            if (hit.collider.name == "rightarrow")
+                                            {
+                                                Debug.Log("right");
+                                                if (hit.collider.name == "leftarrow")
+                                                {
+                                                    Debug.Log("left");
+                                                    box_old_top.SetActive(false);
+                                                    box_new_top.SetActive(true);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            box_new_top.SetActive(false);
+                            box_old_top.SetActive(true);
+                        }
+                    }
+                    return;
+
+                case "driver":
+                    Debug.Log("ドライバーを取得");
+                   item_driver.SetActive(true);
+                    driver.SetActive(false);
+                    return;
+
+
             }
+                    
 
 
-           
-
+        }
 
             rayItem = GameObject.Find("itemListCamera").GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(rayItem, out hit, Mathf.Infinity, 1 << 9))
@@ -242,7 +331,25 @@ public class PlayerAction_CameraController : MonoBehaviour
                             }
                             break;
                         }
-                }
+
+                case "item_driver_plane":
+                    {
+                        if (myItem == "driver")
+                        {
+                            Debug.Log("ドライバーを戻した");
+                            GameObject.Find("item_driver_plane").GetComponent<MeshRenderer>().enabled = false;
+                            myItem = "noitem";
+                        }
+                        else
+                        {
+                            Debug.Log("ドライバーを装備した");
+                            GameObject.Find("item_driver_plane").GetComponent<MeshRenderer>().enabled = true;
+                            myItem = "driver";
+
+                        }
+                        break;
+                    }
+            }
                 Debug.Log("MainCamera");
 
             }
@@ -272,9 +379,17 @@ public class PlayerAction_CameraController : MonoBehaviour
                 }
 
 
+              if (hit.collider.name == "daruma_table")
+              {
+                Debug.Log("daruma_Camera");
+                daruma_Camera.SetActive(true);
+                mainCamera.SetActive(false);
+                itemListCamera.GetComponent<Camera>().enabled = false;
+                itemListCamera.GetComponent<Camera>().enabled = true;
+              }
+
            }
   
 
         }
     }
-}
